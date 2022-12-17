@@ -9,6 +9,8 @@
 	export let url = 'ul';
 	export let types = [''];
 
+let hansi = 3;
+
 	function getColorByType(type) {
 		switch (type) {
 			case 'fire':
