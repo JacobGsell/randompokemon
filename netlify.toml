@@ -1,3 +1,7 @@
 [build]
-  command = "npm run smui-theme-light && npm run smui-theme-dark && npm run build"
-  publish = "build"
+  command = "npm run build"
+  publish = "build/"
+  functions = "functions/"
+
+[functions]
+  node_bundler = "esbuild"
