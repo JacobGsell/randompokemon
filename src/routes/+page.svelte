@@ -135,6 +135,8 @@
 	}
 </script>
 
+<link rel="stylesheet" href="/smui.css" />
+
 <div class="h-screen  w-full bg-stone-900 flex flex-col justify-between">
 	<header class="w-full h- auto, flex justify-center">
 		<h1 class="animate-bounce text-xl text-white mt-2">Random Pokemon {@html ':)'}</h1>
