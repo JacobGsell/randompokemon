@@ -11,12 +11,12 @@
 	const MIN_POKEMON_ID = 1;
 
 	onMount(async () => {
-		document.body.onkeyup = (e) => {
-			if (e.key == ' ' || e.code == 'Space' || e.keyCode == 32) {
+		window.addEventListener('keydown', function (e) {
+			if (e.key == ' ' || e.code == 'Space' || e.keyCode == 32 && e.target == document.body) {
 				e.preventDefault();
 				handleClick();
 			}
-		};
+		});
 	});
 
 	async function getRandomPokemon() {
@@ -277,7 +277,8 @@
 			on:click={handleClick}
 		>
 			<Section style="display:flex; justify-content:center;">
-				<h3 class="text-lg capitalize">[Spacebar] Reload</h3>
+				<h3 class="hidden md:flex text-lg capitalize">[Spacebar] Reload</h3>
+				<h3 class="md:hidden text-lg capitalize">Reload</h3>
 			</Section>
 		</BottomAppBar>
 	</footer>
