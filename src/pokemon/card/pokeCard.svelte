@@ -9,8 +9,6 @@
 	export let url = 'ul';
 	export let types = [''];
 
-	let hansi = 31;
-
 	function getColorByType(type) {
 		switch (type) {
 			case 'fire':
@@ -53,7 +51,7 @@
 	}
 </script>
 
-<div class="card-container md:h-full md:w-96">
+<div class="card-container md:h-full md:w-1/2">
 	<Card>
 		<div class="bg-stone-800" Style="padding: 1rem;">
 			<h2 class="mdc-typography--headline6 uppercase  text-white" style="margin: 0;">
