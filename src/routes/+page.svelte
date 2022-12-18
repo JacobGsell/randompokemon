@@ -135,8 +135,6 @@
 	}
 </script>
 
-<link rel="stylesheet" href="/smui.css" />
-
 <div class="h-screen  w-full bg-stone-900 flex flex-col justify-between">
 	<header class="w-full h- auto, flex justify-center">
 		<h1 class="animate-bounce text-xl text-white mt-2">Random Pokemon {@html ':)'}</h1>
@@ -157,7 +155,7 @@
 
 		<div
 			id="typesInfoContainer"
-			class="flex flex-col md:row-span-2 md:flex-row justify-evenly align-middle gap-4 flex-wrap"
+			class="flex flex-col md:row-span-2 md:flex-row bg-stone-900 justify-evenly align-middle gap-4 flex-wrap"
 		>
 			<div class="w-full  h-fit bg-stone-800 flex flex-col justify-between">
 				<h2 class="text-center text-white">High dmg from</h2>
