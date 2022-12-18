@@ -9,7 +9,7 @@
 	export let url = 'ul';
 	export let types = [''];
 
-let hansi = 3;
+	let hansi = 31;
 
 	function getColorByType(type) {
 		switch (type) {
@@ -66,7 +66,7 @@ let hansi = 3;
 		<Media class="card-media-16x9" aspectRatio="16x9">
 			<MediaContent class=" flex justify-center bg-gradient-to-r from-fuchsia-900 to-stone-400">
 				{#if url === ''}
-						<CircularProgress class="w-20" indeterminate />
+					<CircularProgress class="w-20" indeterminate />
 				{:else}
 					<img src={url} alt="pokemon" />
 				{/if}
