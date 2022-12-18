@@ -1,10 +1,11 @@
 <script>
-	import Chip, { Set, Text } from '@smui/chips';
-	import PokeCard from '../pokemon/card/pokeCard.svelte';
-	import { getColorByType } from '../pokemon/util/util.svelte';
-	import BottomAppBar, { Section, AutoAdjust } from '@smui-extra/bottom-app-bar';
+	import BottomAppBar, { Section } from '@smui-extra/bottom-app-bar';
 	import { onMount } from 'svelte';
+	import PokeCard from '../pokemon/card/pokeCard.svelte';
+	import InfoPanel from '../pokemon/info/InfoPanel.svelte';
+	import Switch from '@smui/switch';
 
+	let checked = true;
 	let bottomAppBar;
 
 	const MAX_POKEMON_ID = 906;
@@ -12,7 +13,7 @@
 
 	onMount(async () => {
 		window.addEventListener('keydown', function (e) {
-			if (e.key == ' ' || e.code == 'Space' || e.keyCode == 32 && e.target == document.body) {
+			if (e.key == ' ' || e.code == 'Space' || (e.keyCode == 32 && e.target == document.body)) {
 				e.preventDefault();
 				handleClick();
 			}
@@ -46,11 +47,12 @@
 		json._types = json.types;
 		json.types = json.types.map((entry) => entry.type.name);
 
+		json.url = json.sprites.other['official-artwork'].front_default;
+
 		json.damage_relations = await getAdvantageRelations(json);
 
 		// Type disadvantage
 		if (res.ok) {
-			console.log('json', json);
 			return json;
 		} else {
 			throw new Error(text);
@@ -136,138 +138,58 @@
 </script>
 
 <div class="h-screen  w-full bg-stone-900 flex flex-col justify-between">
-	<header class="w-full h- auto, flex justify-center">
+	<header class="w-full h-auto, flex justify-center flex-wrap">
 		<h1 class="animate-bounce text-xl text-white mt-2">Random Pokemon {@html ':)'}</h1>
+		<div class="w-full flex justify-center">
+			<div class="inline-block align-text-bottom">
+				<Switch bind:checked />
+				<span class=" h-fit text-white">Display type relations</span>
+			</div>
+		</div>
 	</header>
 
 	<main class="md:w-full h-auto flex mb-10 min-w-fit flex-col md:flex-row justify-center gap-4">
 		{#await promise}
 			<PokeCard name={'...'} id={0} flavor_text={'...'} url={''} types={['normal']} />
 		{:then pokemon}
-			<PokeCard
-				name={pokemon.name}
-				id={pokemon.id}
-				flavor_text={pokemon.flavor_text}
-				url={pokemon.sprites.other['official-artwork'].front_default}
-				types={pokemon.types}
-			/>
+			<PokeCard {...pokemon} />
 		{/await}
 
-		<div
-			id="typesInfoContainer"
-			class="flex flex-col md:row-span-2 md:flex-row bg-stone-900 justify-evenly align-middle gap-4 flex-wrap"
-		>
-			<div class="w-full  h-fit bg-stone-800 flex flex-col justify-between">
-				<h2 class="text-center text-white">High dmg from</h2>
-
-				<div id="content" class="grow mt-2">
-					<div class="divide-y divide-solid divide-stone-700">
-						{#await promise then pokemon}
-							<Set
-								class="flex justify-center"
-								chips={Array.isArray(pokemon.damage_relations.all.high_damage_from[0])
-									? pokemon.damage_relations.all.high_damage_from[0]
-									: pokemon.damage_relations.all.high_damage_from}
-								let:chip
-								nonInteractive
-							>
-								<Chip style="background-color: {getColorByType(chip)}" class="type-chip" {chip}>
-									<Text>{chip}</Text>
-								</Chip>
-							</Set>
-						{/await}
-					</div>
-				</div>
+		{#if checked}
+			<div
+				id="typesInfoContainer"
+				class="flex flex-col md:row-span-2 md:flex-row bg-stone-900 justify-evenly align-middle gap-4 flex-wrap"
+			>
+				{#await promise}
+					<InfoPanel title={'High damage from'} chipsInfo={[]} />
+					<InfoPanel title={'Low damage from'} chipsInfo={[]} />
+					<InfoPanel title={'High damage to'} chipsInfo={[]} />
+					<InfoPanel title={'Low damage to'} chipsInfo={[]} />
+					<InfoPanel title={'No damage from'} chipsInfo={[]} />
+				{:then pokemon}
+					<InfoPanel
+						title={'High damage from'}
+						chipsInfo={pokemon.damage_relations.all.high_damage_from}
+					/>
+					<InfoPanel
+						title={'Low damage from'}
+						chipsInfo={pokemon.damage_relations.all.low_damage_from}
+					/>
+					<InfoPanel
+						title={'High damage to'}
+						chipsInfo={pokemon.damage_relations.all.high_damage_to}
+					/>
+					<InfoPanel
+						title={'Low damage to'}
+						chipsInfo={pokemon.damage_relations.all.low_damage_to}
+					/>
+					<InfoPanel
+						title={'No damage from'}
+						chipsInfo={pokemon.damage_relations.all.no_damage_from}
+					/>
+				{/await}
 			</div>
-			<div class="w-full h-fit bg-stone-800 flex flex-col justify-between">
-				<h2 class="text-center text-white mt-2">Low dmg from</h2>
-
-				<div id="content" class="grow mt-2">
-					<div class="divide-y divide-solid divide-stone-700">
-						{#await promise then pokemon}
-							<Set
-								class="flex justify-center"
-								chips={Array.isArray(pokemon.damage_relations.all.low_damage_from[0])
-									? pokemon.damage_relations.all.low_damage_from[0]
-									: pokemon.damage_relations.all.low_damage_from}
-								let:chip
-								nonInteractive
-							>
-								<Chip style="background-color: {getColorByType(chip)}" class="type-chip" {chip}>
-									<Text>{chip}</Text>
-								</Chip>
-							</Set>
-						{/await}
-					</div>
-				</div>
-			</div>
-			<div class="w-full  h-fit bg-stone-800 flex flex-col justify-between">
-				<h2 class="text-center text-white mt-2">High dmg to</h2>
-
-				<div id="content" class="grow mt-2">
-					<div class="divide-y divide-solid divide-stone-700">
-						{#await promise then pokemon}
-							<Set
-								class="flex justify-center"
-								chips={Array.isArray(pokemon.damage_relations.all.high_damage_to[0])
-									? pokemon.damage_relations.all.high_damage_to[0]
-									: pokemon.damage_relations.all.high_damage_to}
-								let:chip
-								nonInteractive
-							>
-								<Chip style="background-color: {getColorByType(chip)}" class="type-chip" {chip}>
-									<Text>{chip}</Text>
-								</Chip>
-							</Set>
-						{/await}
-					</div>
-				</div>
-			</div>
-			<div class="w-full h-fit bg-stone-800 flex flex-col justify-between">
-				<h2 class="text-center text-white mt-2">Low dmg to</h2>
-
-				<div id="content" class="grow mt-2">
-					<div class="divide-y divide-solid divide-stone-700">
-						{#await promise then pokemon}
-							<Set
-								class="flex justify-center"
-								chips={Array.isArray(pokemon.damage_relations.all.low_damage_to[0])
-									? pokemon.damage_relations.all.low_damage_to[0]
-									: pokemon.damage_relations.all.low_damage_to}
-								let:chip
-								nonInteractive
-							>
-								<Chip style="background-color: {getColorByType(chip)}" class="type-chip" {chip}>
-									<Text>{chip}</Text>
-								</Chip>
-							</Set>
-						{/await}
-					</div>
-				</div>
-			</div>
-			<div class="w-full  h-fit bg-stone-800 flex flex-col justify-between">
-				<h2 class="text-center text-white mt-2">No dmg from</h2>
-
-				<div id="content" class="grow mt-2">
-					<div class="divide-y divide-solid divide-stone-700">
-						{#await promise then pokemon}
-							<Set
-								class="flex justify-center"
-								chips={Array.isArray(pokemon.damage_relations.all.no_damage_from[0])
-									? pokemon.damage_relations.all.no_damage_from[0]
-									: pokemon.damage_relations.all.no_damage_from}
-								let:chip
-								nonInteractive
-							>
-								<Chip style="background-color: {getColorByType(chip)}" class="type-chip" {chip}>
-									<Text>{chip}</Text>
-								</Chip>
-							</Set>
-						{/await}
-					</div>
-				</div>
-			</div>
-		</div>
+		{/if}
 	</main>
 
 	<footer>
